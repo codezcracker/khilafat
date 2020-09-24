@@ -1,0 +1,24 @@
+
+#wrapper{
+	overflow: hidden;
+	position: relative;
+}
+.header{
+	@include clearFix();
+}
+.logo-holder{
+	float: left;
+	width: 80px;
+	a{
+		display: block;
+	}
+	svg{
+		display: block;
+		height: auto;
+		width: 100%;
+	}
+}
+
+
+
+
