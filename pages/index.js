@@ -18,8 +18,8 @@ export default function Home() {
         </div>
       </header>
       <main>
-
-<Iframe url="https://timesprayer.com/widgets.php?frame=2&amp;lang=en&amp;name=salt&amp;sound=true&amp;avachang=true"
+    
+    <Iframe url="https://timesprayer.com/widgets.php?frame=2&amp;lang=en&amp;name=salt&amp;sound=true&amp;fcolor=1B646A&amp;tcolor=26A2B5&amp;frcolor=113030"
         width="100%"
         height="450px"
         id="myId"
