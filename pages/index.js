@@ -21,7 +21,7 @@ export default function Home() {
     
     <Iframe url="https://timesprayer.com/widgets.php?frame=2&amp;lang=en&amp;name=salt&amp;sound=true&amp;fcolor=1B646A&amp;tcolor=26A2B5&amp;frcolor=113030"
         width="100%"
-        height="800px"
+        height="240px"
         id="myId"
         className="myClassname"
         display="initial"
