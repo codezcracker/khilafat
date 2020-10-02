@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Logo from '../images/logo.svg';
-import Iframe from 'react-iframe'
+import iFrame from 'react-iframe';
 import adhan from 'Adhan';
 import moment from 'moment-timezone';
 import React, { useState, useEffect } from 'react';
@@ -8,106 +8,69 @@ import React, { useState, useEffect } from 'react';
 
 export default function Home() {
   useEffect(() => {
+    if (!navigator && !navigator.geolocation && !navigator.geolocation.getCurrentPosition) {
+      return;
+    }
 
-    // var onSuccess = function(position) {
+    const getPrayerTime = prayerTime => moment(prayerTime).tz('Asia/Dubai').format('h:mm A');
 
-    //   // console.log(position.coords.latitude);
-    //   // console.log(position.coords.longitude);
-    //   // console.log(position.coords.accuracy);
-    //   // console.log(position.coords.altitude);
-    //   // console.log(position.coords.altitudeAccuracy);
-    //   // console.log(position.coords.heading);
-    //   // console.log(position.coords.speed);
-    //   // console.log(position.coords.timestamp);
-      
-    // };
- 
-    // function onError(error) {
-    //     alert('code: '    + error.code    + '\n' +
-    //           'message: ' + error.message + '\n');
-    // }
- 
-    // navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    navigator.geolocation.getCurrentPosition(async ({ coords = {} }) => {
+      const { latitude, longitude } = coords;
 
+      const date = new Date();
+      const coordinates = new adhan.Coordinates(latitude, longitude);
+      const params = adhan.CalculationMethod.MuslimWorldLeague();
+      params.madhab = adhan.Madhab.Hanafi;
 
+      const {
+        asr, fajr, isha, dhuhr, maghrib, sunrise,
+      } = new adhan.PrayerTimes(coordinates, date, params);
 
-var aaaa, b;
+      const asrTime = getPrayerTime(asr);
+      const fajrTime = getPrayerTime(fajr);
+      const ishaTime = getPrayerTime(isha);
+      const dhuhrTime = getPrayerTime(dhuhr);
+      const maghribTime = getPrayerTime(maghrib);
+      const sunriseTime = getPrayerTime(sunrise);
 
-if('geolocation' in navigator){
-  navigator.geolocation.getCurrentPosition(function(position) {
-    window.aaaa = position;
-    console.log({ lat: position.coords.latitude, lng: position.coords.longitude });
-  });
-}
-
-console.log(navigator.geolocation);
-  console.log('aaaa', aaaa);
-
-    var locationLat = 25.2697;
-    var locationLong = 55.3095;
-
-
-    var date = new Date();
-    var coordinates = new adhan.Coordinates(locationLat, locationLong);
-    var params = adhan.CalculationMethod.MuslimWorldLeague();
-    params.madhab = adhan.Madhab.Hanafi;
-    var prayerTimes = new adhan.PrayerTimes(coordinates, date, params);
-     
-    var fajrTime = moment(prayerTimes.fajr).tz('Asia/Dubai').format('h:mm A');
-    var sunriseTime = moment(prayerTimes.sunrise).tz('Asia/Dubai').format('h:mm A');
-    var dhuhrTime = moment(prayerTimes.dhuhr).tz('Asia/Dubai').format('h:mm A');
-    var asrTime = moment(prayerTimes.asr).tz('Asia/Dubai').format('h:mm A');
-    var maghribTime = moment(prayerTimes.maghrib).tz('Asia/Dubai').format('h:mm A');
-    var ishaTime = moment(prayerTimes.isha).tz('Asia/Dubai').format('h:mm A');
-
-
-    console.log(fajrTime);
-    console.log(sunriseTime);
-    console.log(dhuhrTime);
-    console.log(asrTime);
-    console.log(maghribTime);
-    console.log(ishaTime);
-
-
-
-  });
-
+      console.log('fajrTime', fajrTime);
+      console.log('sunriseTime', sunriseTime);
+      console.log('dhuhrTime', dhuhrTime);
+      console.log('asrTime', asrTime);
+      console.log('maghribTime', maghribTime);
+      console.log('ishaTime', ishaTime);
+    });
+  }, []);
 
 
   return (
     <div id='wrapper'>
       <Head>
-        <title>Khilafat</title>
-        <link rel="icon" href="/logo.svg" />
+        <title>Khilaafat</title>
+        <link rel="icon" href="/logo.svg"/>
       </Head>
 
       <header className='header'>
         <div className='logo-holder'>
           <a href="/">
-            <Logo className='logo' />
+            <Logo className='logo'/>
           </a>
         </div>
       </header>
-      <main>
 
-{/*
-    <Iframe url="https://timesprayer.com/widgets.php?frame=2&amp;lang=en&amp;name=dubai&amp;sound=true&amp;fcolor=1B646A&amp;tcolor=26A2B5&amp;frcolor=113030"
-        width="100%"
-        height="240px"
-        id="myId"
-        className="myClassname"
-        display="initial"
-        position="relative"/>
-*/ }
+      <main>
+        {/*
+          <iFrame
+            url="https://timesprayer.com/widgets.php?frame=2&amp;lang=en&amp;name=dubai&amp;sound=true&amp;fcolor=1B646A&amp;tcolor=26A2B5&amp;frcolor=113030"
+            width="100%"
+            height="240px"
+            id="myId"
+            className="myClassname"
+            display="initial"
+            position="relative"
+          />
+        */}
       </main>
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        </a>
-      </footer>
     </div>
   )
 }
