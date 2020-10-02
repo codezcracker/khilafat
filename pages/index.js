@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Logo from '../images/logo.svg';
 import Iframe from 'react-iframe'
-import adhan from 'Adhan';
+import adhan from 'adhan';
 import moment from 'moment-timezone';
 import React, { useState, useEffect } from 'react';
 
