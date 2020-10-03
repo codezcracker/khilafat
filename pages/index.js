@@ -8,70 +8,39 @@ import React, { useState, useEffect } from 'react';
 
 export default function Home() {
   useEffect(() => {
+    if (!navigator && !navigator.geolocation && !navigator.geolocation.getCurrentPosition) {
+      return;
+    }
 
-    // var onSuccess = function(position) {
+    const getPrayerTime = prayerTime => moment(prayerTime).tz('Asia/Dubai').format('h:mm A');
 
-    //   // console.log(position.coords.latitude);
-    //   // console.log(position.coords.longitude);
-    //   // console.log(position.coords.accuracy);
-    //   // console.log(position.coords.altitude);
-    //   // console.log(position.coords.altitudeAccuracy);
-    //   // console.log(position.coords.heading);
-    //   // console.log(position.coords.speed);
-    //   // console.log(position.coords.timestamp);
-      
-    // };
- 
-    // function onError(error) {
-    //     alert('code: '    + error.code    + '\n' +
-    //           'message: ' + error.message + '\n');
-    // }
- 
-    // navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    navigator.geolocation.getCurrentPosition(async ({ coords = {} }) => {
+      const { latitude, longitude } = coords;
 
+      const date = new Date();
+      const coordinates = new adhan.Coordinates(latitude, longitude);
+      const params = adhan.CalculationMethod.MuslimWorldLeague();
+      params.madhab = adhan.Madhab.Hanafi;
 
+      const {
+        asr, fajr, isha, dhuhr, maghrib, sunrise,
+      } = new adhan.PrayerTimes(coordinates, date, params);
 
-var aaaa, b;
+      const asrTime = getPrayerTime(asr);
+      const fajrTime = getPrayerTime(fajr);
+      const ishaTime = getPrayerTime(isha);
+      const dhuhrTime = getPrayerTime(dhuhr);
+      const maghribTime = getPrayerTime(maghrib);
+      const sunriseTime = getPrayerTime(sunrise);
 
-if('geolocation' in navigator){
-  navigator.geolocation.getCurrentPosition(function(position) {
-    window.aaaa = position;
-    console.log({ lat: position.coords.latitude, lng: position.coords.longitude });
+      console.log('fajrTime', fajrTime);
+      console.log('sunriseTime', sunriseTime);
+      console.log('dhuhrTime', dhuhrTime);
+      console.log('asrTime', asrTime);
+      console.log('maghribTime', maghribTime);
+      console.log('ishaTime', ishaTime);
+    });
   });
-}
-
-console.log(navigator.geolocation);
-  console.log('aaaa', aaaa);
-
-    var locationLat = 25.2697;
-    var locationLong = 55.3095;
-
-
-    var date = new Date();
-    var coordinates = new adhan.Coordinates(locationLat, locationLong);
-    var params = adhan.CalculationMethod.MuslimWorldLeague();
-    params.madhab = adhan.Madhab.Hanafi;
-    var prayerTimes = new adhan.PrayerTimes(coordinates, date, params);
-     
-    var fajrTime = moment(prayerTimes.fajr).tz('Asia/Dubai').format('h:mm A');
-    var sunriseTime = moment(prayerTimes.sunrise).tz('Asia/Dubai').format('h:mm A');
-    var dhuhrTime = moment(prayerTimes.dhuhr).tz('Asia/Dubai').format('h:mm A');
-    var asrTime = moment(prayerTimes.asr).tz('Asia/Dubai').format('h:mm A');
-    var maghribTime = moment(prayerTimes.maghrib).tz('Asia/Dubai').format('h:mm A');
-    var ishaTime = moment(prayerTimes.isha).tz('Asia/Dubai').format('h:mm A');
-
-
-    console.log(fajrTime);
-    console.log(sunriseTime);
-    console.log(dhuhrTime);
-    console.log(asrTime);
-    console.log(maghribTime);
-    console.log(ishaTime);
-
-
-
-  });
-
 
 
   return (
