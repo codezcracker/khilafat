@@ -1,14 +1,42 @@
 import Head from 'next/head';
-import Logo from '../images/logo.svg';
 import Iframe from 'react-iframe'
 import adhan from 'adhan';
 import moment from 'moment-timezone';
+import useSound from 'use-sound';
+
+import Logo from '../images/logo.svg';
+import SoundUrl from '../sound/audio2.mp3';
 import React, { useState, useEffect } from 'react';
 
+import CustomTime from './CustomTime';
+
+
+const PlayButton = () => {
+  const [play] = useSound(
+    SoundUrl,
+    {
+      onend: () => {
+        console.info('Sound ended!');
+      },
+      volume: 0.9,
+      loop: true,
+    }
+  );
+  return <button onClick={play}>Play</button>;
+};
 
 export default function Home() {
+  const [prayerTimings, setPrayerTimings] = useState({
+    fajrTime: '',
+    dhuhrTime: '',
+    asrTime: '',
+    maghribTime: '',
+    ishaTime: '',
+    sunriseTime: ''
+  });
+
   useEffect(() => {
-    if (!navigator && !navigator.geolocation && !navigator.geolocation.getCurrentPosition) {
+    if (!((navigator || {}).geolocation || {}).getCurrentPosition) {
       return;
     }
 
@@ -16,11 +44,11 @@ export default function Home() {
 
     navigator.geolocation.getCurrentPosition(async ({ coords = {} }) => {
       const { latitude, longitude } = coords;
-
       const date = new Date();
       const coordinates = new adhan.Coordinates(latitude, longitude);
       const params = adhan.CalculationMethod.MuslimWorldLeague();
-      params.madhab = adhan.Madhab.Hanafi;
+//      params.madhab = adhan.Madhab.Hanafi;
+      params.madhab = adhan.Madhab.Shafi;
 
       const {
         asr, fajr, isha, dhuhr, maghrib, sunrise,
@@ -32,16 +60,9 @@ export default function Home() {
       const dhuhrTime = getPrayerTime(dhuhr);
       const maghribTime = getPrayerTime(maghrib);
       const sunriseTime = getPrayerTime(sunrise);
-
-      console.log('fajrTime', fajrTime);
-      console.log('sunriseTime', sunriseTime);
-      console.log('dhuhrTime', dhuhrTime);
-      console.log('asrTime', asrTime);
-      console.log('maghribTime', maghribTime);
-      console.log('ishaTime', ishaTime);
+      setPrayerTimings({fajrTime,dhuhrTime ,asrTime, maghribTime, ishaTime, sunriseTime});
     });
   });
-
 
   return (
     <div id='wrapper'>
@@ -50,33 +71,39 @@ export default function Home() {
         <link rel="icon" href="/logo.svg" />
       </Head>
 
-      <header className='header'>
+{/*      <header className='header'>
         <div className='logo-holder'>
           <a href="/">
             <Logo className='logo' />
           </a>
         </div>
       </header>
-      <main>
+    */}
 
-{/*
-    <Iframe url="https://timesprayer.com/widgets.php?frame=2&amp;lang=en&amp;name=dubai&amp;sound=true&amp;fcolor=1B646A&amp;tcolor=26A2B5&amp;frcolor=113030"
-        width="100%"
-        height="240px"
-        id="myId"
-        className="myClassname"
-        display="initial"
-        position="relative"/>
-*/ }
+      <PlayButton />
+
+      <main>
+        <ul>
+          {['fajrTime', 'sunriseTime', 'dhuhrTime', 'asrTime', 'maghribTime', 'ishaTime'].map(key => 
+            <li key={key}>
+              <strong>{key}:</strong>
+              <span>{prayerTimings[key]}</span>
+            </li>
+          )}
+        </ul>
+  
+        <CustomTime />
+
+
+        <Iframe url="https://timesprayer.com/widgets.php?frame=2&amp;lang=en&amp;name=dubai&amp;sound=true&amp;fcolor=1B646A&amp;tcolor=26A2B5&amp;frcolor=113030"
+          width="100%"
+          height="240px"
+          id="myId"
+          className="myClassname"
+          display="initial"
+          position="relative"/>
+      
       </main>
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        </a>
-      </footer>
     </div>
   )
 }
